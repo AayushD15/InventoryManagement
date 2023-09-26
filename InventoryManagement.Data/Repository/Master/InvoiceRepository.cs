@@ -136,10 +136,6 @@ namespace InventoryManagement.Data.Repository.Master
 
                     list.Add(db);
                 }
-                else
-                {
-                    throw new Exception("Item Not Available");
-                }
             });
             return list;
         }
