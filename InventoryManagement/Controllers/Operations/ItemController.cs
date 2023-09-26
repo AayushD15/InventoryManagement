@@ -27,5 +27,27 @@ namespace InventoryManagement.Controllers.Operations
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+        [HttpPost("UpdateStock")]
+        public async Task<ActionResult<UpdateStock>> UpdateStock([FromBody] UpdateStock record)
+        {
+            var command = new UpdateStockCommand()
+            {
+                Record = record
+            };
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteItem([FromRoute] int Id)
+        {
+            var result = await _mediator.Send(new DeleteItemById
+            {
+                Id = Id,
+            });
+
+            return Ok(result);
+
+        }
     }
 }

@@ -65,9 +65,31 @@ namespace InventoryManagement.Data.Repository.Master
             dbItem.IsDeleted = record.IsDeleted;
         }
 
-        public Task<Items> DeleteAsync(Items entity)
+        public async Task<Items> DeleteAsync(Items entity)
         {
-            throw new NotImplementedException();
+            var dbItem = _dbContext.Items.FirstOrDefault(it => it.Id == entity.Id);
+            if (dbItem == null) return entity;
+            dbItem.IsDeleted = true;
+            _dbContext.Items.Update(dbItem);
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                try
+                {
+                    _dbContext.Database.CloseConnection();
+                }
+                catch { }
+            }
+            return entity;
+
+
         }
 
         public IQueryable<Items> GetAll()
@@ -83,6 +105,34 @@ namespace InventoryManagement.Data.Repository.Master
         public Task<ListQueryResult<Items>> GetByQuery(ListQuery<Items> query)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<UpdateStock> UpdateStockAsync(UpdateStock entity)
+        {
+
+            var dbItem = _dbContext.Items.FirstOrDefault(it => it.Id == entity.ItemId);
+            if (dbItem == null) return entity;
+            dbItem.ItemStock += entity.ItemStock;
+            _dbContext.Items.Update(dbItem);
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                try
+                {
+                    _dbContext.Database.CloseConnection();
+                }
+                catch { }
+            }
+            return entity;
+
+
         }
     }
 }
