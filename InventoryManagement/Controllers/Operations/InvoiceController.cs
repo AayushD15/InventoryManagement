@@ -36,5 +36,22 @@ namespace InventoryManagement.Controllers.Operations
                 throw e;
             }
         }
+
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> DeleteInvoice([FromRoute] int Id)
+        {
+            var result = await _mediator.Send(new DeleteInvoiceById
+            {
+                Id = Id,
+            });
+            return Ok(result);
+        }
+        [Route("/api/invoice/")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateItems([FromBody] Invoice record)
+        {
+            var result = await _mediator.Send(new UpdateInvoiceCommand() { Item = record });
+            return Ok(result);
+        }
     }
 }

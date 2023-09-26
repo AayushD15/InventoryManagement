@@ -157,9 +157,30 @@ namespace InventoryManagement.Data.Repository.Master
             return list;
         }
 
-        public Task<Invoice> DeleteAsync(Invoice entity)
+        public async Task<Invoice> DeleteAsync(Invoice entity)
         {
-            throw new NotImplementedException();
+
+            var dbItem = dbContext.Invoice.FirstOrDefault(it => it.Id == entity.Id);
+            if (dbItem == null) return entity;
+            dbItem.IsDeleted = true;
+            dbContext.Invoice.Update(dbItem);
+            try
+            {
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                try
+                {
+                    dbContext.Database.CloseConnection();
+                }
+                catch { }
+            }
+            return entity;
         }
 
         public IQueryable<Invoice> GetAll()
@@ -175,6 +196,32 @@ namespace InventoryManagement.Data.Repository.Master
         public Task<ListQueryResult<Invoice>> GetByQuery(ListQuery<Invoice> query)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Invoice> UpdateInvoiceAsync(Invoice entity)
+        {
+            var dbItem = dbContext.Invoice.Include(it => it.Items).FirstOrDefault(it => it.Id == entity.Id);
+            dbItem.Items.Clear();
+            if (dbItem == null) return entity;
+            ConverToDb(entity, dbItem);
+            dbContext.Invoice.Update(dbItem);
+            try
+            {
+                await dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                try
+                {
+                    dbContext.Database.CloseConnection();
+                }
+                catch { }
+            }
+            return ConvertFromDb(dbItem);
         }
     }
 }

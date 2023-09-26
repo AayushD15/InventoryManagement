@@ -49,5 +49,14 @@ namespace InventoryManagement.Controllers.Operations
             return Ok(result);
 
         }
+        [Route("/api/item/")]
+        [HttpPut]
+        public async Task<IActionResult> UpdateItems([FromBody] Items record)
+        {
+            var result = await _mediator.Send(new UpdateItemCommand() { Items = record });
+            return Ok(result);
+        }
+
+
     }
 }

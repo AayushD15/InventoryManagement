@@ -10,5 +10,6 @@ namespace InventoryManagement.Data.Repository.Master
     {
 
         Task<UpdateStock> UpdateStockAsync(UpdateStock entity);
+        Task<Items> UpdateItemsAysnc(Items entity);
     }
 }

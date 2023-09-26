@@ -88,8 +88,6 @@ namespace InventoryManagement.Data.Repository.Master
                 catch { }
             }
             return entity;
-
-
         }
 
         public IQueryable<Items> GetAll()
@@ -133,6 +131,34 @@ namespace InventoryManagement.Data.Repository.Master
             return entity;
 
 
+        }
+
+        public async Task<Items> UpdateItemsAysnc(Items entity)
+        {
+            var dbItem = _dbContext.Items.FirstOrDefault(it => it.Id == entity.Id);
+            if (dbItem == null) return entity;
+            dbItem.ItemName = entity.ItemName;
+            dbItem.ItemPrice = entity.ItemPrice;
+            dbItem.ItemStock = entity.ItemStock;
+            dbItem.IsDeleted = entity.IsDeleted;
+            _dbContext.Items.Update(dbItem);
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                try
+                {
+                    _dbContext.Database.CloseConnection();
+                }
+                catch { }
+            }
+            return entity;
         }
     }
 }
